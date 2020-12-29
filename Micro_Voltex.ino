@@ -49,8 +49,7 @@ void setup() {
   generateInverseLogCurve();
 }
 
-ISR(TIMER3_COMPA_vect)
-{
+ISR(TIMER3_COMPA_vect) {
   ++msCounter;
   oneMsFlag = true;
 }
@@ -75,12 +74,10 @@ void backgroundTask() {
 void oneMsTask() {
   static long temp;
   static long temp2;
-  if (oneMsFlag)
-  {
+  if (oneMsFlag) {
 
     temp = micros();
-    if (msCounter % 2 == 0 && msCounter % 4 == 0)
-    {
+    if (msCounter % 2 == 0 && msCounter % 4 == 0) {
       //tlcButtonReactive();
       tlcButtonReactiveFade(1);
 
@@ -96,8 +93,7 @@ void oneMsTask() {
     }
     temp2 = micros();
 
-    if(msCounter % 1000 == 0)
-    {
+    if(msCounter % 1000 == 0) {
       
     }
 

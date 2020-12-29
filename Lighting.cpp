@@ -45,8 +45,7 @@ void rand256(unsigned char *input) {
 }
 
 void generateInverseLogCurve() {
-  for (unsigned char i = 1; i < (LIGHTING_LEVELS + 1); ++i)
-  {
+  for (unsigned char i = 1; i < (LIGHTING_LEVELS + 1); ++i) {
     //logArray[LIGHTING_LEVELS - i] = (unsigned char)((log(i) / log(64)) * 255);
     if (i == 1) {
       logArray[LIGHTING_LEVELS - i] = 1;
@@ -123,8 +122,7 @@ void tlcSpiUpdate() {
 
 void tlcButtonReactive() {
   for (unsigned char i = 0; i < 7; ++i) {
-    if (inputStruct.buttonState[i] == true)
-    {
+    if (inputStruct.buttonState[i] == true) {
       switch (i) {
         case 0:
         case 1:
@@ -152,8 +150,7 @@ void tlcButtonReactiveFade(unsigned short stepInterval) {
   static unsigned char degenLevel[7] = {0, 0, 0, 0, 0, 0, 0};
 
   for (unsigned char i = 0; i < 7; ++i) {
-    if (inputStruct.buttonState[i] == true)
-    {
+    if (inputStruct.buttonState[i] == true) {
       switch (i) {
         case 0:
         case 1:
