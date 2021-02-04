@@ -3,17 +3,17 @@
 
 #include "GlowProfile.h"
 
+using KeypressCallback = char (*)(void);
+
 class KeypadProfile{
-    // struct ButtonLayout{
-    //     ButtonLayout();
-    //     char FX_L     = 'M';
-    //     char FX_R     = 'C';
-    //     char BUTTON_A = 'D';
-    //     char BUTTON_B = 'F';
-    //     char BUTTON_C = 'J';
-    //     char BUTTON_D = 'K';
-    //     char START    = '1';
-    // } ButtonLayout;
+    public:
+        KeypressCallback START    = [](){ return '1'; };
+        KeypressCallback BUTTON_A = [](){ return 'D'; };
+        KeypressCallback BUTTON_B = [](){ return 'F'; };
+        KeypressCallback BUTTON_C = [](){ return 'J'; };
+        KeypressCallback BUTTON_D = [](){ return 'K'; };
+        KeypressCallback FX_L     = [](){ return 'M'; };
+        KeypressCallback FX_R     = [](){ return 'C'; };
 };
 
 #endif
