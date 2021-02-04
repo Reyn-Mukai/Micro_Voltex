@@ -1,8 +1,8 @@
 #include "Setup.h"
-#include "Controller.h"
+#include "Faders.h"
 #include "pt.h"
 
-Controller miniSDVX = Controller();
+Faders FadersSDVX = Faders();
 
 void setup() {
   msInterruptSetup(); // Timer3 Setup 1ms Interrupt (16MHz Ext. Clk)
@@ -12,6 +12,6 @@ void setup() {
 }
 
 void loop() {
-  miniSDVX.updateLeftEncoder();
-  miniSDVX.updateRightEncoder();
+  FadersSDVX.updateLeft();
+  FadersSDVX.updateRight();
 }
