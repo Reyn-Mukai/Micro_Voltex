@@ -2,6 +2,7 @@
 #include "Faders.h"
 #include "Keypad.h"
 #include "KeypadProfile.h"
+#include "Key.h"
 
 #include "pt.h"
 
@@ -11,7 +12,7 @@ KeypadProfile kpp = KeypadProfile();
 
 // === Devices ======================
 Faders faders = Faders();
-Keypad keypad = Keypad();
+Keypad keypad = Keypad(kpp);
 // ==================================
 
 void setup() {
@@ -21,13 +22,13 @@ void setup() {
   Serial.begin(115200); // Start Serial Debug Output
 
   // Profile callbacks
-  kpp.START    = [](){ return '1'; };
-  kpp.BUTTON_A = [](){ return 'D'; };
-  kpp.BUTTON_B = [](){ return 'F'; };
-  kpp.BUTTON_C = [](){ return 'J'; };
-  kpp.BUTTON_D = [](){ return 'K'; };
-  kpp.FX_L     = [](){ return 'M'; };
-  kpp.FX_R     = [](){ return 'C'; };
+  kpp.START = SimpleKeypress<'1'>;
+  kpp.BTA  = SimpleKeypress<'D'>;
+  kpp.BTB  = SimpleKeypress<'F'>;
+  kpp.BTC  = SimpleKeypress<'J'>;
+  kpp.BTD  = SimpleKeypress<'K'>;
+  kpp.FXL  = SimpleKeypress<'M'>;
+  kpp.FXR  = SimpleKeypress<'C'>;
   
 }
 
@@ -36,5 +37,7 @@ void setup() {
 void loop() {
   faders.updateLeft();  // [ ]us
   faders.updateRight(); // [ ]us
+  Serial.println( keypad.buttons[0].key.getValue() );
+  Serial.println( keypad.buttons[0].pin );
   // foreach protothread function, run next chunk.
 }

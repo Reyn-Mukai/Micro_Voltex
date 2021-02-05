@@ -1,8 +1,20 @@
 #include "Keypad.h"
+#include "KeypadProfile.h"
+#include "Key.h"
 
-Keypad::Keypad(){
-    inputPinInitialize();
-}
+Keypad::Keypad( KeypadProfile profile ) : buttons{
+    { START_PIN, Key( profile.START ) },
+    { BTA_PIN,   Key( profile.BTA ) },
+    { BTB_PIN,   Key( profile.BTB ) },
+    { BTC_PIN,   Key( profile.BTC ) },
+    { BTD_PIN,   Key( profile.BTD ) },
+    { FXL_PIN,   Key( profile.FXL ) },
+    { FXR_PIN,   Key( profile.FXR ) }
+}{}
+
+//Keypad::Keypad( KeypadProfile profile )
+//    inputPinInitialize();
+//}
 
 void Keypad::inputPinInitialize(){
     pinMode(BTA_PIN,     INPUT_PULLUP);
@@ -17,7 +29,7 @@ void Keypad::inputPinInitialize(){
 }
 
 
-void Keypad::updateKey(Keypad::PinId id, Keypad::ButtonState& state){
+void Keypad::updateKey(Keypad::PinId id, Key::ButtonState& state){
 //  if (digitalRead(Id) == LOW && inputStruct.buttonState[i] == false) {
 //    Keyboard.press(inputStruct.asciiKey[i]);
 //    inputStruct.buttonState[i] = true;

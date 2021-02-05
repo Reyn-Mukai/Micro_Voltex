@@ -3,9 +3,13 @@
 
 #include <Arduino.h>
 
-class Keypad{
-    public:
+#include "KeypadProfile.h"
+#include "Key.h"
         
+class Keypad{
+  
+    public:
+        static const int debounceMs = 10;
         enum PinId{
             BTA_PIN     = A0,
             BTB_PIN     = A1,
@@ -17,23 +21,18 @@ class Keypad{
             SERVICE_PIN = 10,
             TEST_PIN    = 11
         };
-
-        struct ButtonState{
-            bool depressed = false;
-            unsigned long delta = 0;
+        struct KeypinPair{
+            PinId pin;
+            Key key;
         };
-
-        Keypad();
-        void updateKey(PinId, ButtonState&);
-
-        static const int debounceMs = 10;
-
+        void updateKey(PinId, Key::ButtonState&);
+        Keypad(KeypadProfile);
+        KeypinPair buttons[7]; 
         
     private:
-
-
         void inputPinInitialize();    // Set Button Pin Mode
         void inputStructInitialize(); // Initialize Button Struct
+        
 };
 
 #endif
