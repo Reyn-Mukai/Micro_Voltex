@@ -12,7 +12,7 @@ KeypadProfile kpp = KeypadProfile();
 
 // === Devices ======================
 Faders faders = Faders();
-Keypad keypad = Keypad(kpp);
+Keypad keypad = Keypad(&kpp);
 // ==================================
 
 void setup() {
@@ -23,12 +23,12 @@ void setup() {
 
   // Profile callbacks
   kpp.START = SimpleKeypress<'1'>;
-  kpp.BTA  = SimpleKeypress<'D'>;
-  kpp.BTB  = SimpleKeypress<'F'>;
-  kpp.BTC  = SimpleKeypress<'J'>;
-  kpp.BTD  = SimpleKeypress<'K'>;
-  kpp.FXL  = SimpleKeypress<'M'>;
-  kpp.FXR  = SimpleKeypress<'C'>;
+  kpp.BTA  = SimpleKeypress<'d'>;
+  kpp.BTB  = SimpleKeypress<'f'>;
+  kpp.BTC  = SimpleKeypress<'j'>;
+  kpp.BTD  = SimpleKeypress<'k'>;
+  kpp.FXL  = SimpleKeypress<'m'>;
+  kpp.FXR  = SimpleKeypress<'c'>;
   
 }
 
@@ -37,7 +37,6 @@ void setup() {
 void loop() {
   faders.updateLeft();  // [ ]us
   faders.updateRight(); // [ ]us
-  Serial.println( keypad.buttons[0].key.getValue() );
-  Serial.println( keypad.buttons[0].pin );
+  keypad.process();
   // foreach protothread function, run next chunk.
 }

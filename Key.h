@@ -1,6 +1,8 @@
 #ifndef KEY_H
 #define KEY_H
 
+#include <Arduino.h>
+
 #include "KeypadProfile.h"
 
 template<const char T>
@@ -10,23 +12,39 @@ class Key{
   
     public:
     
+        enum PinId{
+            BTA_PIN     = A0,
+            BTB_PIN     = A1,
+            BTC_PIN     = A2,
+            BTD_PIN     = A3,
+            FXL_PIN     = A4,
+            FXR_PIN     = A5,
+            START_PIN   = 12,
+            SERVICE_PIN = 10,
+            TEST_PIN    = 11
+        };
+    
+        static const int debounceMs = 10;
+        
         struct ButtonState{
             bool depressed = false;
-            unsigned long delta = 0;
+            unsigned long lastUpdate = 0;
         };
         
-        Key(KeypressCallback cb){ this->valuecb = cb; }
+        Key(PinId pin, KeypressCallback* cb);
         
-        void setState( ButtonState state ){ this->state = state; }
-        ButtonState getState(){ return this->state; };
+        void setState( ButtonState state );
+        ButtonState getState();
         
-        void setValuecb( KeypressCallback cb ){ this->valuecb = cb; }
-        char getValue(){ return this->valuecb(); };
-        
+        void setValuecb( KeypressCallback* cb );
+        char getValue();
+        void process();      
         
     private:
-        KeypressCallback valuecb;
-        ButtonState state;
+        ButtonState state{};
+        PinId pin;
+        KeypressCallback* valuecb;
+        void inputPinInitialize();
     
 };
 
