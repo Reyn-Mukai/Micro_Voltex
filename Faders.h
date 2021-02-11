@@ -18,4 +18,6 @@ class Faders{
         Encoder encRight = Encoder(ENC_2_PIN_A, ENC_2_PIN_B);
 };
 
+extern Faders faders;
+
 #endif

@@ -2,17 +2,21 @@
 #define KEYPAD_H
 
 #include "KeypadProfile.h"
-#include "Key.h"
-        
+
 class Keypad{
-  
+    
     public:
-        Keypad(KeypadProfile*);
+        Keypad();
+        Keypad(KeypadProfile* profile);
         void process();
+        void setProfile(KeypadProfile*);
+        KeypadProfile* getProfile();
         
     private:
-        Key buttons[7]; 
-        
+        KeypadProfile* profile;
+
 };
+
+extern Keypad keypad;
 
 #endif

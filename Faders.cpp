@@ -2,6 +2,8 @@
 
 #include "Faders.h"
 
+Faders faders = Faders();
+
 void Faders::updateLeft() {
   if (encLeft.read() != 0) {
     //pixelEncoderSetLeftFlag();

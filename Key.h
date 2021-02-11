@@ -2,16 +2,19 @@
 #define KEY_H
 
 #include <Arduino.h>
+#include <Keyboard.h>
 
-#include "KeypadProfile.h"
-
-template<const char T>
-char SimpleKeypress(void){ return T; }
+struct KeyState{
+    bool depressed = false;
+    unsigned long lastUpdate = 0;
+};
 
 class Key{
   
     public:
-    
+      
+        static const int debounceMs = 10;
+        
         enum PinId{
             BTA_PIN     = A0,
             BTB_PIN     = A1,
@@ -23,29 +26,58 @@ class Key{
             SERVICE_PIN = 10,
             TEST_PIN    = 11
         };
-    
-        static const int debounceMs = 10;
         
-        struct ButtonState{
-            bool depressed = false;
-            unsigned long lastUpdate = 0;
-        };
+
+        Key(PinId pin);
         
-        Key(PinId pin, KeypressCallback* cb);
-        
-        void setState( ButtonState state );
-        ButtonState getState();
-        
-        void setValuecb( KeypressCallback* cb );
-        char getValue();
-        void process();      
-        
+        KeyState getState() const;
+        void setState( KeyState state );
+        bool wasDepressed(){
+            return this->state.depressed == true;
+        }
+        bool isDepressed(){
+            return digitalRead(this->pin) == LOW;
+        }
+        bool isDebounced(){
+            return (millis() - this->state.lastUpdate) >= (Key::debounceMs);
+        }
+        void process(){
+            if ( this->isDepressed() && !this->wasDepressed() ) { // Pressed
+                this->onKeyPress();
+                this->state.depressed = true;
+                this->state.lastUpdate = millis();
+            } else if ( this->isDepressed() && this->wasDepressed() ){ // Held
+                this->onKeyHold();
+            } else if ( !this->isDepressed() && this->wasDepressed() && this->isDebounced() ) { // Released
+                this->onKeyRelease();
+                this->state.depressed = false;
+            }
+        }
     private:
-        ButtonState state{};
-        PinId pin;
-        KeypressCallback* valuecb;
+    
+        virtual void onKeyPress(){}
+        virtual void onKeyHold(){}
+        virtual void onKeyRelease(){}
+        
+        const PinId pin;
+        KeyState state;
+        
         void inputPinInitialize();
     
 };
 
+template<char C>
+class SimpleKeypress : public Key{
+    public:
+        using Key::Key;
+    private:
+        void onKeyPress() override{ 
+            Keyboard.press(C);
+        }
+        void onKeyHold() override{
+        }
+        void onKeyRelease() override{
+            Keyboard.release(C);
+        }
+};
 #endif
