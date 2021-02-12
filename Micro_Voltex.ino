@@ -59,6 +59,8 @@ KeypadProfile kpp2 = KeypadProfile(
 );
 // ==================================
 
+struct pt pt;
+
 void setup() {
 
     // Arduino Setup
@@ -74,7 +76,7 @@ void setup() {
     SPI.beginTransaction(overglow.TLC_SPI_SETTINGS);
     
     for(auto i : overglow.lightingStruct.ledId){
-        overglow.tlcSpiWrite(i, 2048, 2048, 2048);
+        overglow.tlcSpiWrite(i, 4095, 4095, 4095);
     }
     overglow.tlcSpiUpdate();
 
@@ -86,7 +88,8 @@ void loop() {
     faders.updateLeft();
     faders.updateRight();
     keypad.process();
-    auto value = round( 2048 * pow( sin(PI * millis()/1000/5 ), 2) );
+    auto value = round( 4095 * pow( sin(PI * micros()/1000000/5 ), 2) );
+    Serial.println(value);
     for(auto i : overglow.lightingStruct.ledId){
         overglow.tlcSpiWrite(i, value, value, value);
     }
