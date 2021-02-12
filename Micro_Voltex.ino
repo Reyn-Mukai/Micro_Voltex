@@ -6,7 +6,7 @@
 #include "Keypad.h"
 #include "KeypadProfile.h"
 #include "Key.h"
-//#include "Overglow.h"
+#include "Overglow.h"
 
 #include "Utility.h"
 
@@ -68,10 +68,15 @@ void setup() {
     // Profile Init
     keypad.setProfile(&kpp);
     
-//  PT_INIT(&pt);
-//  tlcSpiInitialize();
-//  lightingStructInitialize();
-//  SPI.beginTransaction(TLC_SPI_SETTINGS);
+    PT_INIT(&pt);
+    overglow.tlcSpiInitialize();
+    overglow.lightingStructInitialize();
+    SPI.beginTransaction(overglow.TLC_SPI_SETTINGS);
+    
+    for(auto i : overglow.lightingStruct.ledId){
+        overglow.tlcSpiWrite(i, 2048, 2048, 2048);
+    }
+    overglow.tlcSpiUpdate();
 
 }
 
@@ -81,4 +86,9 @@ void loop() {
     faders.updateLeft();
     faders.updateRight();
     keypad.process();
+    auto value = round( 2048 * pow( sin(PI * millis()/1000/5 ), 2) );
+    for(auto i : overglow.lightingStruct.ledId){
+        overglow.tlcSpiWrite(i, value, value, value);
+    }
+    overglow.tlcSpiUpdate();
 }
