@@ -37,16 +37,34 @@ class ProfileSwitch : public Key{
             keypad.setProfile( ( keypad.getProfile() == &kpp ) ? &kpp2 : &kpp );
         }
 };
+class NoInput : public Key{
+    public:
+        using Key::Key;
+    private:
+        void onKeyPress() override{
+        }
+        void onKeyHold() override{
+        }
+        void onKeyRelease() override{
+        }
+};
 
 // === Profiles =====================
 KeypadProfile kpp = KeypadProfile(
-    new ProfileSwitch(Key::START_PIN),
-    new SimpleKeypress<'a'>(Key::BTA_PIN),
-    new SimpleKeypress<'b'>(Key::BTB_PIN),
-    new SimpleKeypress<'c'>(Key::BTC_PIN),
-    new SimpleKeypress<'d'>(Key::BTD_PIN),
-    new SimpleKeypress<'f'>(Key::FXL_PIN),
-    new SimpleKeypress<'x'>(Key::FXR_PIN)
+    new NoInput(Key::START_PIN),
+    new NoInput(Key::BTA_PIN),
+    new NoInput(Key::BTB_PIN),
+    new NoInput(Key::BTC_PIN),
+    new NoInput(Key::BTD_PIN),
+    new NoInput(Key::FXL_PIN),
+    new NoInput(Key::FXR_PIN)
+//    new ProfileSwitch(Key::START_PIN),
+//    new SimpleKeypress<'a'>(Key::BTA_PIN),
+//    new SimpleKeypress<'b'>(Key::BTB_PIN),
+//    new SimpleKeypress<'c'>(Key::BTC_PIN),
+//    new SimpleKeypress<'d'>(Key::BTD_PIN),
+//    new SimpleKeypress<'f'>(Key::FXL_PIN),
+//    new SimpleKeypress<'x'>(Key::FXR_PIN)
 );
 KeypadProfile kpp2 = KeypadProfile(
     new ProfileSwitch(Key::START_PIN),
@@ -59,7 +77,25 @@ KeypadProfile kpp2 = KeypadProfile(
 );
 // ==================================
 
-struct pt pt;
+struct pt ept;
+
+// 24-bit (12 bit getters)
+// 8bits * 3 = 24 bits (2 12bit numbers)
+//struct tbi{
+//    unsigned int value: 12;
+//};
+
+// python3: a = [round(4095*m.sin(m.pi*x/64)) for x in range(0, 64)]
+int it = 0;
+bool up = true;
+unsigned long prev = 0;
+int lut[64] = {
+    0, 2, 10, 22, 39, 61, 88, 120, 156, 197, 242, 291, 345, 403, 465, 530, 
+    600, 672, 749, 828, 910, 995, 1082, 1172, 1264, 1358, 1453, 1550, 1648, 
+    1747, 1847, 1947, 2048, 2148, 2248, 2348, 2447, 2545, 2642, 2737, 2831, 
+    2923, 3013, 3100, 3185, 3267, 3346, 3423, 3495, 3565, 3630, 3692, 3750, 
+    3804, 3853, 3898, 3939, 3975, 4007, 4034, 4056, 4073, 4085, 4093
+};
 
 void setup() {
 
@@ -70,8 +106,8 @@ void setup() {
     // Profile Init
     keypad.setProfile(&kpp);
     
-    PT_INIT(&pt);
-    overglow.tlcSpiInitialize();
+    PT_INIT(&ept);
+    overglow.initialize();
     overglow.lightingStructInitialize();
     SPI.beginTransaction(overglow.TLC_SPI_SETTINGS);
     
@@ -79,6 +115,8 @@ void setup() {
         overglow.tlcSpiWrite(i, 4095, 4095, 4095);
     }
     overglow.tlcSpiUpdate();
+
+    prev = millis();
 
 }
 
@@ -88,10 +126,32 @@ void loop() {
     faders.updateLeft();
     faders.updateRight();
     keypad.process();
-    auto value = round( 4095 * pow( sin(PI * micros()/1000000/5 ), 2) );
-    Serial.println(value);
-    for(auto i : overglow.lightingStruct.ledId){
-        overglow.tlcSpiWrite(i, value, value, value);
+
+    // Breathe lighting
+    auto delta = millis() - prev;
+    if(delta >= 25){
+//        auto c = lut[(it < 64) ? it++ : it=0];
+        int c = lut[it];
+        Serial.println(c, DEC);
+        if(up){
+            if(it >= 63){
+                up = false;
+                it--;
+            } else {
+                it++;
+            }
+        }else{
+            if(it <= 0){
+                up = true;
+                it++;
+            } else {
+                it--;
+            }
+        }
+        for(auto i : overglow.lightingStruct.ledId){
+            overglow.tlcSpiWrite(i, c, c, c);
+        }
+        overglow.tlcSpiUpdate();
+        prev = millis();
     }
-    overglow.tlcSpiUpdate();
 }

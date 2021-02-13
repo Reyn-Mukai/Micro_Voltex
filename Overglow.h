@@ -9,7 +9,7 @@ class Overglow{
         typedef struct {
           unsigned char ledId [7];
         } lighting_type;
-        static SPISettings TLC_SPI_SETTINGS;//(8000000, MSBFIRST, SPI_MODE0);
+        static SPISettings TLC_SPI_SETTINGS;
         unsigned char ledSpiBuffer[48];
         lighting_type lightingStruct;
         
@@ -29,7 +29,7 @@ class Overglow{
             TLC_LAT = 6,
             TLC_OE = 7
         };
-        void tlcSpiInitialize() {
+        void initialize() {
             // Initialize SPI Pins
             pinMode(MOSI, OUTPUT);
             pinMode(SCK, OUTPUT);
