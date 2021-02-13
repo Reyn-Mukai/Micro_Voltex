@@ -25,7 +25,7 @@
 extern KeypadProfile kpp, kpp2;
 extern Keypad keypad;
 
-class ProfileSwitch : public Key{
+class ProfileSwitch : public Key {
     public:
         using Key::Key;
     private:
@@ -77,15 +77,8 @@ KeypadProfile kpp2 = KeypadProfile(
 );
 // ==================================
 
-struct pt ept;
+// python3: a = [round(4095*m.sin(m.pi*x/2/64)) for x in range(0, 64)]
 
-// 24-bit (12 bit getters)
-// 8bits * 3 = 24 bits (2 12bit numbers)
-//struct tbi{
-//    unsigned int value: 12;
-//};
-
-// python3: a = [round(4095*m.sin(m.pi*x/64)) for x in range(0, 64)]
 int it = 0;
 bool up = true;
 unsigned long prev = 0;
@@ -105,16 +98,6 @@ void setup() {
 
     // Profile Init
     keypad.setProfile(&kpp);
-    
-    PT_INIT(&ept);
-    overglow.initialize();
-    overglow.lightingStructInitialize();
-    SPI.beginTransaction(overglow.TLC_SPI_SETTINGS);
-    
-    for(auto i : overglow.lightingStruct.ledId){
-        overglow.tlcSpiWrite(i, 4095, 4095, 4095);
-    }
-    overglow.tlcSpiUpdate();
 
     prev = millis();
 
@@ -132,7 +115,6 @@ void loop() {
     if(delta >= 25){
 //        auto c = lut[(it < 64) ? it++ : it=0];
         int c = lut[it];
-        Serial.println(c, DEC);
         if(up){
             if(it >= 63){
                 up = false;
@@ -148,10 +130,10 @@ void loop() {
                 it--;
             }
         }
-        for(auto i : overglow.lightingStruct.ledId){
-            overglow.tlcSpiWrite(i, c, c, c);
+        for(int i = 0; i < 7; i++){
+            overglow.setLed(i, c, c, c);
         }
-        overglow.tlcSpiUpdate();
+        overglow.flush();
         prev = millis();
     }
 }
